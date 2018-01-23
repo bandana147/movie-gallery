@@ -1,0 +1,5 @@
+{
+  "name": "Home Screen",
+  "private": true,
+  "main": "./HomeScreen"
+}

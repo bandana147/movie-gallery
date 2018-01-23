@@ -1,0 +1,21 @@
+.home-screen__header {
+  background-color: #222;
+  height: 5rem;
+  padding: 2rem;
+  color: white;
+}
+
+.home-screen__header-items {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-screen__body {
+  padding: 2rem;
+  display: flex;
+  justify-content: space-around;
+  width: 50%;
+  margin: auto;
+  background: darkkhaki;
+}
