@@ -1,0 +1,5 @@
+{
+  "name": "Search Result",
+  "private": true,
+  "main": "./SearchResult"
+}

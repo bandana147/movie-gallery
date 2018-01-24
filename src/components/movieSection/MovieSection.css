@@ -1,22 +1,12 @@
-.movie-section__card {
-  height: 3rem;
-  padding: 1rem;
-  color: #000;
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid lavender;
-  align-items: center;
-}
-
 .movie-section__header {
-  background: darkorange;
+  background: #1ea0ea;
   height: 3rem;
   line-height: 3rem;
   padding-left: 1rem;
 }
 
 .movie-section__body {
-  max-height: 30rem;
+  max-height: 38rem;
   overflow: auto;
   background: whitesmoke;
 }
@@ -25,6 +15,7 @@
   padding-right: .5rem;
   font-size: 13px;
   text-align: left;
+
 }
 
 .movie-section__card-item.number {
@@ -37,8 +28,9 @@
 
 .movie-section__body-title {
   text-align: right;
-  font-size: 13px;
+  font-size: 11px;
   padding: .5rem;
+  color: darkgoldenrod;
 }
 
 

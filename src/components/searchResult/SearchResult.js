@@ -8,9 +8,9 @@ import _get from 'lodash/get';
 import MovieCard from '../movieCard';
 
 //styles
-import './MovieSection.css';
+import './SearchResult.css';
 
-class MovieSection extends Component {
+class SearchResult extends Component {
 
   renderMovies = movie => {
     const {
@@ -35,9 +35,10 @@ class MovieSection extends Component {
     const movieNodes = _get(this.props, 'movies', []).map(this.renderMovies);
 
     return (
-      <div className="movie-section">
+      <div className="search-result">
+        <div className="go-back" onClick={this.props.goBackHome}>{`<-- Go back to Home`}</div>
         <div className="movie-section__header">
-          <h3 className="movie-section__title">{this.props.sectionName}</h3>
+          <span className="movie-section__title">Search Result for "{this.props.keyword}"</span>
         </div>
         <div className="movie-section__body">
           {movieNodes}
@@ -47,10 +48,11 @@ class MovieSection extends Component {
   }
 }
 
-MovieSection.propTypes = {
+SearchResult.propTypes = {
   sectionName: PropTypes.string,
   movies: PropTypes.array,
+  goBackHome: PropTypes.func,
 };
 
-export default MovieSection;
+export default SearchResult;
 

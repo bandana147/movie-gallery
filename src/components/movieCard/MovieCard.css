@@ -1,0 +1,83 @@
+.movie-section__card-body {
+  color: brown;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.movie-section__card {
+  margin-bottom: 2rem;
+  height: 9rem;
+  padding: 1rem;
+  border-top: 1px solid lavender;
+}
+
+.movie-section__card-footer {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 12px;
+}
+
+.movie-section__card-footer__action {
+  cursor: pointer;
+  color: #000066;
+  border: 1px solid #000066;
+  border-radius: 2px;
+  font-size: 10px;
+  width: 6rem;
+  height: 1rem;
+  line-height: 1rem;
+  text-align: center;
+}
+
+.movie-section__card-item {
+  padding-right: .5rem;
+  font-size: 13px;
+  text-align: left;
+}
+
+.movie-section__poster {
+  height: 10rem;
+  width: 16rem;
+  background-color: azure;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-right: 1rem;
+}
+
+.movie-section__info {
+  font-size: 12px;
+  width:50rem;
+}
+
+.movie-section__card-info__title {
+  color: #0089ff;
+  font-weight: 600;
+  margin-bottom: .5rem;
+  font-size: 13px;
+}
+
+.movie-section__card-info__release {
+  font-size: 10px;
+  margin-top: 5px;
+  margin-bottom: 0.2rem;
+}
+
+.movie-section__card-info__description {
+  font-size: 11px;
+  margin-bottom: 0.2rem;
+  height: 4rem;
+  max-height: 4rem;
+  overflow: auto;
+}
+
+.movie-section__body-title {
+  text-align: right;
+  font-size: 11px;
+  padding: .5rem;
+  color: darkgoldenrod;
+}
+
+
+

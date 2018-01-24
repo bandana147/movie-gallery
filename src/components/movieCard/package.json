@@ -1,0 +1,5 @@
+{
+  "name": "Movie Card",
+  "private": true,
+  "main": "./MovieCard"
+}
