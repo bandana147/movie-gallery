@@ -1,0 +1,39 @@
+.movie-list__body {
+  width: 50%;
+  margin: 2rem auto;
+  background: #d3d3d33d;
+}
+
+.movie-list__list {
+  height: calc(100vh - 18rem);
+  overflow-y: scroll;
+  padding: 0 2rem;
+}
+
+.movie-list__view-more {
+  text-align: center;
+  font-size: 12px;
+}
+
+.home-screen__header {
+  background-color: #222;
+  height: 5rem;
+  padding: 2rem;
+  color: white;
+}
+
+.home-screen__header a {
+  text-decoration: none;
+  color: white;
+}
+
+.movie-list__header {
+  padding: 1rem;
+  background: darkkhaki;
+}
+
+.home-screen__header-items {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

@@ -1,5 +1,5 @@
 {
-  "name": "Login Screen",
+  "name": "Login Modal",
   "private": true,
   "main": "./LoginPopUp"
 }

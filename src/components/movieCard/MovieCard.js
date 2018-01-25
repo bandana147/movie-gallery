@@ -1,90 +1,76 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import {connect} from 'react-redux';
+
 import _get from 'lodash/get';
 import _find from 'lodash/find';
 import _isEmpty from 'lodash/isEmpty';
-import axios from 'axios';
+
+//Actions
+import {
+  fetchMovieDetails,
+  fetchMovieCredits,
+} from '../../actions';
+
+//Styles
 import './MovieCard.css';
 
 class MovieCard extends Component {
 
-  state = {
-    productionCompany: '',
-    casts: [],
-    director: ''
-  }
+  componentWillMount() {
+    const {
+      movieId,
+      movieCredits,
+      movieDetails,
+      } = this.props;
+    const currentCredits = _find(movieCredits, {id: movieId}, {});
+    const currentDetails = _find(movieDetails, {id: movieId}, {});
 
-  componentWillMount(){
-    if(this.props.movieId) {
-      axios.get(`https://api.themoviedb.org/3/movie/${this.props.movieId}?api_key=5d18d5ebb6703b4789dca35c9f7bb17b`)
-        .then(({data}) => {
-          this.setState({
-            productionCompany: _get(data, 'production_companies.0.name', ''),
-          })
-        });
-      axios.get(`https://api.themoviedb.org/3/movie/${this.props.movieId}/credits?api_key=5d18d5ebb6703b4789dca35c9f7bb17b`)
-        .then(({data}) => {
-          const casts = data.cast.slice(0,4);
-          const director = _find(data.crew, {job: 'Director'});
-          debugger
-          this.setState({
-            casts,
-            directorName: _get(director, 'name')
-          })
-        });
+    if (movieId && _isEmpty(currentCredits)) {
+      this.props.fetchMovieCredits(movieId);
+    }
+
+    if (movieId && _isEmpty(currentDetails)) {
+      this.props.fetchMovieDetails(movieId);
     }
   }
-
-  componentWillReceiveProps(nextProps){
-    if(this.props.movieId !== nextProps.movieId) {
-      axios.get(`https://api.themoviedb.org/3/movie/${nextProps.movieId}?api_key=5d18d5ebb6703b4789dca35c9f7bb17b`)
-        .then(({data}) => {
-          this.setState({
-            productionCompany: _get(data, 'production_companies.0.name', ''),
-          })
-        });
-      axios.get(`https://api.themoviedb.org/3/movie/${nextProps.movieId}/credits?api_key=5d18d5ebb6703b4789dca35c9f7bb17b`)
-        .then(({data}) => {
-          debugger
-          this.setState({
-            movieDetails: data.results,
-          })
-        });
-    }
-  }
-
-  getStyle = url => (url ? {
-    backgroundImage: `url(${url})`,
-  } : {});
-
 
   render() {
     const {
+      movieId,
       name,
       posterUrl,
       description,
       releaseDate,
       baseUrl,
       posterSize,
+      movieDetails,
+      movieCredits,
       } = this.props;
-    const {
-      productionCompany,
-      directorName,
-      casts,
-      } = this.state;
+
     const poster = `${baseUrl}/${posterSize}/${posterUrl}`;
+    const productionCompany = _get(_find(movieDetails, {id: movieId}), 'production_companies.0.name', '');
+    const currentCredits = _find(movieCredits, {id: movieId}, {});
+    const director = _find(_get(currentCredits, 'crew', []), {job: 'Director'});
+    const casts = _get(currentCredits, 'cast', []).slice(0, 4);
 
     return (
       <div className="movie-section__card">
         <div className="movie-section__card-body">
-          {poster && <div className="movie-section__poster movie-section__poster-img" style={this.getStyle(poster)}></div>}
+          {poster &&
+          <img alt="poster" className="movie-section__poster movie-section__poster-img" src={poster}/> }
           <div className="movie-section__info">
             <div className="movie-section__card-info__title">{name}</div>
             <div className="movie-section__card-info__description">{description}</div>
             <div className="movie-section__card-info__release">Release Date: {releaseDate}</div>
-            {!_isEmpty(casts) && <div className="movie-section__card-info__casts"><strong> Stars:</strong> {this.state.casts.map(cast => <span>{`${cast.name}, `} </span>)}</div>}
-            {directorName && <div className="movie-section__card-info__director"><strong>Director:</strong> {directorName}</div>}
-            {productionCompany && <div className="movie-section__card-info__production"><strong>Production House:</strong> {productionCompany}</div>}
+            {!_isEmpty(casts) &&
+            <div className="movie-section__card-info__casts"><strong> Stars:</strong> {casts.map(cast =>
+              <span>{`${cast.name}, `} </span>)}</div>}
+            {director &&
+            <div className="movie-section__card-info__director"><strong>Director:</strong> {director.name}</div>}
+            {productionCompany &&
+            <div className="movie-section__card-info__production"><strong>Production House:</strong> {productionCompany}
+            </div>}
           </div>
         </div>
         <div className="movie-section__card-footer">
@@ -96,12 +82,28 @@ class MovieCard extends Component {
 }
 
 MovieCard.propTypes = {
+  movieId: PropTypes.string,
   name: PropTypes.string,
   posterUrl: PropTypes.string,
   description: PropTypes.string,
-  releaseDate: PropTypes.datetime,
-  movieId: PropTypes.string,
+  releaseDate: PropTypes.string,
+  baseUrl: PropTypes.string,
+  posterSize: PropTypes.string,
+  movieDetails: PropTypes.object,
+  movieCredits: PropTypes.object,
+  fetchMovieDetails: PropTypes.func,
+  fetchMovieCredits: PropTypes.func,
 };
 
-export default MovieCard;
+const mapStateToProps = ({ movies: { movieDetails = {}, movieCredits = []}}) => ({
+  movieDetails,
+  movieCredits,
+});
+
+export default connect(
+  mapStateToProps, {
+    fetchMovieDetails,
+    fetchMovieCredits,
+  }
+)(MovieCard);
 

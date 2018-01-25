@@ -6,8 +6,6 @@
 }
 
 .movie-section__body {
-  max-height: 38rem;
-  overflow: auto;
   background: whitesmoke;
 }
 
@@ -15,7 +13,6 @@
   padding-right: .5rem;
   font-size: 13px;
   text-align: left;
-
 }
 
 .movie-section__card-item.number {
@@ -31,6 +28,16 @@
   font-size: 11px;
   padding: .5rem;
   color: darkgoldenrod;
+}
+
+.view-more {
+  text-align: right;
+  font-size: 12px;
+  background: whitesmoke;
+  padding-right: 1rem;
+  height: 1.5rem;
+  cursor: pointer;
+  color: blue;
 }
 
 

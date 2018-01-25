@@ -1,0 +1,5 @@
+{
+  "name": "Movie List",
+  "private": true,
+  "main": "./MovieList"
+}

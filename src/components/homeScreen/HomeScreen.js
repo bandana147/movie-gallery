@@ -1,12 +1,27 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import PropTypes from 'prop-types';
+import {connect} from 'react-redux';
+import {
+  Link
+} from 'react-router-dom';
 import _isEmpty from 'lodash/isEmpty';
 
+//Components
 import MovieSection from '../movieSection';
 import SearchResult from '../searchResult';
+import LoginPopUp from '../loginPopUp';
 
+//Actions
+import {
+  fetchBaseConfigs,
+  fetchMovies,
+  searchMovie,
+  showHomePage,
+  hideHomePage,
+} from '../../actions';
+
+//Styles
 import searchLogo from '../../magnifying-glass.svg';
-
 import './HomeScreen.css';
 
 class HomeScreen extends Component {
@@ -14,42 +29,27 @@ class HomeScreen extends Component {
   state = {
     loggedIn: false,
     userName: '',
-    topMovies: [],
-    recentlySearched: [],
     movieToSearch: '',
-    searchResult: [],
-    posterSize: 'w300',
+    showLoginPopUp: false,
   }
 
   componentWillMount() {
-    axios.get('https://api.themoviedb.org/3/movie/top_rated?api_key=5d18d5ebb6703b4789dca35c9f7bb17b')
-      .then(({data}) => {
-        this.setState({
-          topMovies: data.results,
-        })
-      })
-      .catch(err=> err);
-    axios.get('https://api.themoviedb.org/3/movie/popular?api_key=5d18d5ebb6703b4789dca35c9f7bb17b')
-      .then(({data}) => {
-        this.setState({
-          recentlySearched: data.results,
-        })
-      })
-      .catch(err=> err);
-    axios.get('https://api.themoviedb.org/3/configuration?api_key=5d18d5ebb6703b4789dca35c9f7bb17b')
-      .then(({data}) => {
-        debugger
-        this.setState({
-          baseUrl: data.images.base_url,
-        })
-      })
-      .catch(err=> err);
+
+    if (_isEmpty(this.props.topMovies.movies)) {
+      this.props.fetchMovies('top_rated');
+    }
+
+    if (_isEmpty(this.props.recentlyReleased.movies)) {
+      this.props.fetchMovies('now_playing');
+    }
+
+    if(_isEmpty(this.props.baseUrl)) {
+      this.props.fetchBaseConfigs();
+    }
   }
 
   goBackHome = () => {
-    this.setState({
-      searchResult: [],
-    })
+    this.props.showHomePage();
   }
 
   onChangeSearch = event => {
@@ -61,32 +61,41 @@ class HomeScreen extends Component {
   }
 
   onClickSearch = () => {
-    axios.get(`https://api.themoviedb.org/3/search/movie?api_key=5d18d5ebb6703b4789dca35c9f7bb17b&query=${this.state.movieToSearch}`)
-      .then(({data}) => {
-        this.setState({
-          searchResult: data.results,
-        })
-      })
-      .catch(err=> err);
+    if(!this.props.searchResult[this.state.movieToSearch]) {
+      this.props.searchMovie(this.state.movieToSearch);
+    }
+    this.props.hideHomePage();
   }
 
   onKeyDown = event => {
-   if (event.keyCode === 13) {
-     this.onClickSearch();
-   }
+    if (event.keyCode === 13) {
+      this.onClickSearch();
+    }
+  }
+
+  onClickLogin = () => {
+    this.setState({
+      showLoginPopUp: true,
+    });
+  }
+
+  onCloseLoginPopUp = () => {
+    this.setState({
+      showLoginPopUp: false,
+    })
   }
 
   renderBody() {
-    const { searchResult, movieToSearch } = this.state;
-    debugger
+    const { movieToSearch } = this.state;
+    const currentSearchResult = this.props.searchResult[movieToSearch];
 
-    if (!_isEmpty(searchResult)) {
+    if (!_isEmpty(currentSearchResult) && !this.props.showHome) {
       return (
         <div className="home-screen__body-search">
           <SearchResult
-            baseUrl={this.state.baseUrl}
-            posterSize={this.state.posterSize}
-            movies={searchResult}
+            baseUrl={this.props.baseUrl}
+            posterSize={this.props.posterSize}
+            movies={currentSearchResult}
             goBackHome={this.goBackHome}
             keyword={movieToSearch}
           />
@@ -94,35 +103,41 @@ class HomeScreen extends Component {
       );
     }
 
+    const topMovies = this.props.topMovies.movies.slice(0, 20);
+    const recentlyReleased = this.props.recentlyReleased.movies.slice(0, 20);
     return (
       <div className="home-screen__body-main">
-        {this.state.topMovies && <div className="home-screen__body-section">
+        {this.state.showLoginPopUp && <LoginPopUp
+          onCloseLoginPopUp={this.onCloseLoginPopUp}
+        />}
+        <div className="home-screen__body-section">
           <MovieSection
-            baseUrl={this.state.baseUrl}
-            posterSize={this.state.posterSize}
+            type="top_rated"
+            baseUrl={this.props.baseUrl}
+            posterSize={this.props.posterSize}
             sectionName={'Top Rated'}
-            movies={this.state.topMovies}
+            movies={topMovies}
           />
-        </div>}
-        {this.state.recentlySearched && <div className="home-screen__body-section">
+        </div>
+        <div className="home-screen__body-section">
           <MovieSection
-            baseUrl={this.state.baseUrl}
-            posterSize={this.state.posterSize}
+            type="now_playing"
+            baseUrl={this.props.baseUrl}
+            posterSize={this.props.posterSize}
             sectionName={'Recently Released'}
-            movies={this.state.recentlySearched}
+            movies={recentlyReleased}
           />
-        </div>}
+        </div>
       </div>
     )
   }
 
   render() {
-
     return (
       <div className="home-screen">
         <header className="home-screen__header">
           <div className="home-screen__header-items">
-            <h1 className="home-screen__title">Movie Gallery</h1>
+            <h1 className="home-screen__title"><Link to={'/'}>Movie Gallery</Link></h1>
             <div className="home-screen__header-actions">
               <div className="home-screen__header-actions__search">
                 <input
@@ -135,7 +150,8 @@ class HomeScreen extends Component {
                   <img src={searchLogo} className="search-logo" alt="logo" onClick={this.onClickSearch}/>
                 </div>
               </div>
-              {this.state.loggedIn ? <span>{this.state.userName}</span> : <span>Login</span>}
+              {this.state.loggedIn ? <span>{this.state.userName}</span> :
+                <span onClick={this.onClickLogin}>Login</span>}
             </div>
           </div>
         </header>
@@ -147,4 +163,35 @@ class HomeScreen extends Component {
   }
 }
 
-export default HomeScreen;
+HomeScreen.propTypes = {
+  topMovies: PropTypes.object,
+  recentlyReleased: PropTypes.object,
+  baseUrl: PropTypes.string,
+  posterSize: PropTypes.string,
+  loadingMovies: PropTypes.bool,
+  searchResult: PropTypes.object,
+  fetchMovies: PropTypes.func,
+  fetchBaseConfigs: PropTypes.func,
+  searchMovie: PropTypes.func,
+  showHomePage: PropTypes.func,
+  hideHomePage: PropTypes.func,
+};
+
+const mapStateToProps = ({ movies: { topMovies = [], recentlyReleased = [], baseUrl={}, posterSize='', searchResult, showHome }}) => ({
+  topMovies,
+  recentlyReleased,
+  baseUrl,
+  posterSize,
+  searchResult,
+  showHome,
+});
+
+export default connect(
+  mapStateToProps, {
+    fetchBaseConfigs,
+    fetchMovies,
+    searchMovie,
+    showHomePage,
+    hideHomePage,
+  }
+)(HomeScreen);

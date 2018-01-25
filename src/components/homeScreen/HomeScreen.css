@@ -5,6 +5,11 @@
   color: white;
 }
 
+.home-screen__header a {
+  text-decoration: none;
+  color: white;
+}
+
 .home-screen__header-items {
   display: flex;
   justify-content: space-between;
@@ -17,25 +22,25 @@
 }
 
 .home-screen__body-section {
-  width: 34rem;
+  width: 45%;
 }
 
 .home-screen__body-search {
-  width: 50rem;
+  width: 45rem;
   margin: auto;
 }
 
 .home-screen__body {
   padding: 2rem;
-  width: 80%;
+  width: 70%;
   margin: auto;
   background: #bdb76b66;
-  height: calc(100vh - 13rem);
 }
 
 .home-screen__header-actions {
   display: flex;
   cursor: pointer;
+  align-items: center;
 }
 .home-screen__header-actions__search {
   display: flex;

@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-//utilities
+import {
+  Link
+} from 'react-router-dom';
 import _get from 'lodash/get';
 
 //components
@@ -29,10 +30,11 @@ class MovieSection extends Component {
        posterUrl={movie.poster_path}
      />
    );
-  }
+  };
 
   render() {
     const movieNodes = _get(this.props, 'movies', []).map(this.renderMovies);
+    const toLink = `/${this.props.type}`;
 
     return (
       <div className="movie-section">
@@ -42,6 +44,7 @@ class MovieSection extends Component {
         <div className="movie-section__body">
           {movieNodes}
         </div>
+        <div className="view-more" onClick={this.props.onClickViewMore}><Link to={toLink}>View More</Link></div>
       </div>
     );
   }
@@ -50,6 +53,7 @@ class MovieSection extends Component {
 MovieSection.propTypes = {
   sectionName: PropTypes.string,
   movies: PropTypes.array,
+  onClickViewMore: PropTypes.func,
 };
 
 export default MovieSection;

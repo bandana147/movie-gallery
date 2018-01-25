@@ -6,8 +6,7 @@
 }
 
 .movie-section__card {
-  margin-bottom: 2rem;
-  height: 9rem;
+  height: 12rem;
   padding: 1rem;
   border-top: 1px solid lavender;
 }
@@ -16,6 +15,7 @@
   display: flex;
   justify-content: flex-end;
   font-size: 12px;
+  margin-top: .5rem;
 }
 
 .movie-section__card-footer__action {
@@ -37,8 +37,8 @@
 }
 
 .movie-section__poster {
-  height: 10rem;
-  width: 16rem;
+  height: 155px;
+  width: 120px;
   background-color: azure;
   background-position: center;
   background-size: cover;

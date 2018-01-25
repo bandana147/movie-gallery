@@ -1,7 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-
-//utilities
 import _get from 'lodash/get';
 
 //components
@@ -29,7 +27,7 @@ class SearchResult extends Component {
        posterUrl={movie.poster_path}
      />
    );
-  }
+  };
 
   render() {
     const movieNodes = _get(this.props, 'movies', []).map(this.renderMovies);
@@ -52,6 +50,9 @@ SearchResult.propTypes = {
   sectionName: PropTypes.string,
   movies: PropTypes.array,
   goBackHome: PropTypes.func,
+  keyword: PropTypes.string,
+  baseUrl:  PropTypes.string,
+  posterSize: PropTypes.string,
 };
 
 export default SearchResult;
