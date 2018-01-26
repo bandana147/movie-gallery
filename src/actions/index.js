@@ -6,12 +6,19 @@ import {
   FETCH_BASE_CONFIGS_SUCCESS,
   FETCH_MOVIE_DETAILS_PENDING,
   FETCH_MOVIE_DETAILS_SUCCESS,
-  FETCH_MOVIE_CREDITS_PENDING,
-  FETCH_MOVIE_CREDITS_SUCCESS,
   SEARCH_MOVIE_PENDING,
   SEARCH_MOVIE_SUCCESS,
   SHOW_HOMEPAGE,
   HIDE_HOMEPAGE,
+  ADD_TO_WATCH_LIST_SUCCESS,
+  ADD_TO_WATCH_LIST_PENDING,
+  USER_LOGIN_PENDING,
+  USER_LOGIN_SUCCESS,
+  HIDE_LOGIN_POP_UP,
+  SHOW_LOGIN_POP_UP,
+  FETCH_WATCH_LIST_PENDING,
+  FETCH_WATCH_LIST_SUCCESS,
+  SHOW_WATCHLIST,
 } from '../constants/ActionTypes'
 
 export const fetchMovies = (movieType, loadMore) => dispatch => {
@@ -57,20 +64,6 @@ export const fetchMovieDetails = (movieId) => dispatch => {
     });
 };
 
-export const fetchMovieCredits = (movieId) => dispatch => {
-  dispatch({
-    type: FETCH_MOVIE_CREDITS_PENDING,
-  });
-
-  movieApi.fetchMovieCredits(movieId)
-    .then(response => {
-      dispatch({
-        type: FETCH_MOVIE_CREDITS_SUCCESS,
-        payload: response,
-      });
-    });
-};
-
 export const searchMovie = (keyword) => dispatch => {
   dispatch({
     type: SEARCH_MOVIE_PENDING,
@@ -85,16 +78,75 @@ export const searchMovie = (keyword) => dispatch => {
     });
 };
 
-export const showHomePage = (keyword) => dispatch => {
+export const addToWatchList = (mediaId, mediaType) => dispatch => {
+  dispatch({
+    type: ADD_TO_WATCH_LIST_PENDING,
+  });
+
+  movieApi.addToWatchList(mediaId, mediaType)
+    .then(response => {
+      dispatch({
+        type: ADD_TO_WATCH_LIST_SUCCESS,
+        payload: response,
+      });
+    });
+};
+
+export const loginUser = (username, password) => dispatch => {
+  dispatch({
+    type: USER_LOGIN_PENDING,
+  });
+
+  movieApi.loginUser(username, password)
+    .then(response => {
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: response,
+      });
+    });
+}
+
+
+export const showHomePage = () => dispatch => {
   dispatch({
     type: SHOW_HOMEPAGE,
   });
 };
 
-export const hideHomePage = (keyword) => dispatch => {
+export const hideHomePage = () => dispatch => {
   dispatch({
     type: HIDE_HOMEPAGE,
   });
 };
 
+export const onShowLoginPage = () => dispatch => {
+  dispatch({
+    type: SHOW_LOGIN_POP_UP,
+  });
+};
 
+export const onHideLoginPage = () => dispatch => {
+  dispatch({
+    type: HIDE_LOGIN_POP_UP,
+  });
+};
+
+export const onShowWatchList = () => dispatch => {
+  dispatch({
+    type: SHOW_WATCHLIST,
+  });
+};
+
+export const fetchWatchList = (payload) => dispatch => {
+  dispatch({
+    type: FETCH_WATCH_LIST_PENDING,
+  });
+
+  movieApi.fetchWatchList()
+    .then(response => {
+      dispatch({
+        type: FETCH_WATCH_LIST_SUCCESS,
+        payload: response,
+      });
+    });
+};

@@ -8,12 +8,19 @@ import {
   FETCH_BASE_CONFIGS_SUCCESS,
   FETCH_MOVIE_DETAILS_PENDING,
   FETCH_MOVIE_DETAILS_SUCCESS,
-  FETCH_MOVIE_CREDITS_PENDING,
-  FETCH_MOVIE_CREDITS_SUCCESS,
   SEARCH_MOVIE_PENDING,
   SEARCH_MOVIE_SUCCESS,
   SHOW_HOMEPAGE,
   HIDE_HOMEPAGE,
+  ADD_TO_WATCH_LIST_SUCCESS,
+  ADD_TO_WATCH_LIST_PENDING,
+  USER_LOGIN_PENDING,
+  USER_LOGIN_SUCCESS,
+  HIDE_LOGIN_POP_UP,
+  SHOW_LOGIN_POP_UP,
+  FETCH_WATCH_LIST_PENDING,
+  FETCH_WATCH_LIST_SUCCESS,
+  SHOW_WATCHLIST,
 } from '../constants/ActionTypes';
 
 const MOVIE_TYPE = {
@@ -29,7 +36,6 @@ const INITIAL_STATE = {
     movies: [],
   },
   posterSize: 'w154',
-  movieCredits: [],
   movieDetails: {},
   searchResult: [],
 };
@@ -101,25 +107,6 @@ export default function (state = INITIAL_STATE, action) {
         },
       });
 
-    case FETCH_MOVIE_CREDITS_PENDING:
-      return update(state, {
-        loading: {
-          $set: true,
-        },
-      });
-
-    case FETCH_MOVIE_CREDITS_SUCCESS:
-      return update(state, {
-        movieCredits: {
-          [payload.movieId]: {
-            $set: payload.data,
-          }
-        },
-        loading: {
-          $set: false,
-        },
-      });
-
     case SEARCH_MOVIE_PENDING:
       return update(state, {
         loading: {
@@ -130,12 +117,15 @@ export default function (state = INITIAL_STATE, action) {
     case SEARCH_MOVIE_SUCCESS:
       return update(state, {
         searchResult: {
-         [payload.movieToSearch]: {
-           $set: payload.data.results,
-         }
+          [payload.movieToSearch]: {
+            $set: payload.data.results,
+          }
         },
         showHome: {
           $set: false,
+        },
+        showSearchResult: {
+          $set: true,
         },
         loading: {
           $set: false,
@@ -147,12 +137,73 @@ export default function (state = INITIAL_STATE, action) {
         showHome: {
           $set: true,
         },
+        showWatchList: {
+          $set: false,
+        },
+        showSearchResult: {
+          $set: false,
+        },
       });
 
     case HIDE_HOMEPAGE:
       return update(state, {
         showHome: {
           $set: false,
+        },
+      });
+
+    case USER_LOGIN_PENDING:
+      return update(state, {
+        loginSucessful: {
+          $set: false,
+        },
+      });
+
+    case USER_LOGIN_SUCCESS:
+      return update(state, {
+        loginSucessful: {
+          $set: true,
+        },
+        showLoginPopUp: {
+          $set: false,
+        },
+      });
+
+    case SHOW_LOGIN_POP_UP:
+      return update(state, {
+        showLoginPopUp: {
+          $set: true,
+        },
+      });
+
+    case HIDE_LOGIN_POP_UP:
+      return update(state, {
+        showLoginPopUp: {
+          $set: false,
+        },
+      });
+
+    case SHOW_WATCHLIST:
+      return update(state, {
+        showWatchList: {
+          $set: true,
+        },
+      });
+
+    case FETCH_WATCH_LIST_PENDING:
+      return update(state, {
+        fetchingWatchList: {
+          $set: true,
+        },
+      });
+
+    case FETCH_WATCH_LIST_SUCCESS:
+      return update(state, {
+        watchListMovies: {
+          $set: payload,
+        },
+        fetchingWatchList: {
+          $set: true,
         },
       });
 

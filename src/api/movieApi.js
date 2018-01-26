@@ -26,12 +26,7 @@ export const fetchBaseConfigs = function () {
 };
 
 export const fetchMovieDetails = function (movieId) {
-  return axios.get(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}`)
-    .then(({data}) => ({movieId, data}));
-};
-
-export const fetchMovieCredits = function (movieId) {
-  return axios.get(`${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}`)
+  return axios.get(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&append_to_response=credits`)
     .then(({data}) => ({movieId, data}));
 };
 
@@ -40,10 +35,60 @@ export const searchMovie = function (movieToSearch) {
     .then(({data}) => ({movieToSearch, data}));
 };
 
+export const addToWatchList = function (mediaId, mediaType='movie') {
+  const sessionId = localStorage.sessionId;
+  const accountId = localStorage.accountId;
+  const payload = {
+    media_type: mediaType,
+    media_id: mediaId,
+    watchlist: true,
+  };
+
+  return axios.post(`${BASE_URL}/account/${accountId}/watchlist?api_key=${API_KEY}&session_id=${sessionId}`, payload);
+};
+
+export const fetchWatchList = function () {
+  const sessionId = localStorage.sessionId;
+  const accountId = localStorage.accountId;
+
+  return axios.get(`${BASE_URL}/account/${accountId}/watchlist/movies?api_key=${API_KEY}&session_id=${sessionId}`)
+    .then(({data}) => (data.results));
+};
+
+export const loginUser = (username, password) => {
+  return axios.get(`${BASE_URL}/authentication/token/new?api_key=${API_KEY}`)
+    .then(({data})=> {
+      const requestToken = data.request_token;
+      return axios.get(`https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=5d18d5ebb6703b4789dca35c9f7bb17b&username=${username}&password=${password}&request_token=${requestToken}`)
+        .then(() => {
+          return axios.get(`https://api.themoviedb.org/3/authentication/session/new?api_key=5d18d5ebb6703b4789dca35c9f7bb17b&request_token=${requestToken}`)
+            .then(({data}) => {
+              localStorage.setItem('sessionId', data.session_id);
+              return axios.get(`https://api.themoviedb.org/3/account?api_key=${API_KEY}&session_id=${data.session_id}`)
+                .then(accountRes => {
+                  localStorage.setItem('accountId', accountRes.data.id);
+                  localStorage.setItem('username', accountRes.data.username || accountRes.data.name );
+                });
+            })
+            .catch(err => {
+              console.log(err);
+            })
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
+
 export default {
   fetchBaseConfigs,
   fetchMovieDetails,
   fetchMovies,
-  fetchMovieCredits,
   searchMovie,
+  addToWatchList,
+  loginUser,
+  fetchWatchList,
 };

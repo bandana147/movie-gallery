@@ -1,37 +1,57 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
+import axios from 'axios';
 
 import _get from 'lodash/get';
 import _find from 'lodash/find';
 import _isEmpty from 'lodash/isEmpty';
+import _filter from 'lodash/filter';
 
 //Actions
 import {
   fetchMovieDetails,
-  fetchMovieCredits,
+  onShowLoginPage,
 } from '../../actions';
+
+//api
+import {
+  addToWatchList
+} from '../../api/movieApi';
 
 //Styles
 import './MovieCard.css';
 
+const tickIconUrl = 'http://www.clker.com/cliparts/2/k/n/l/C/Q/transparent-green-checkmark-md.png';
+
 class MovieCard extends Component {
+
+  state = {
+    addedToWatchList: false,
+  }
 
   componentWillMount() {
     const {
       movieId,
-      movieCredits,
       movieDetails,
       } = this.props;
-    const currentCredits = _find(movieCredits, {id: movieId}, {});
-    const currentDetails = _find(movieDetails, {id: movieId}, {});
 
-    if (movieId && _isEmpty(currentCredits)) {
-      this.props.fetchMovieCredits(movieId);
-    }
-
-    if (movieId && _isEmpty(currentDetails)) {
+    if (movieId && _isEmpty(movieDetails[movieId])) {
       this.props.fetchMovieDetails(movieId);
+    }
+  }
+
+  onClickAddToWatchList = () => {
+    const sessionId = localStorage.sessionId;
+
+    if (sessionId) {
+      addToWatchList(this.props.movieId).then(() => {
+        this.setState({
+          addedToWatchList: true,
+        })
+      });
+    } else {
+      this.props.onShowLoginPage();
     }
   }
 
@@ -45,20 +65,20 @@ class MovieCard extends Component {
       baseUrl,
       posterSize,
       movieDetails,
-      movieCredits,
+      watchListMovies,
       } = this.props;
 
     const poster = `${baseUrl}/${posterSize}/${posterUrl}`;
-    const productionCompany = _get(_find(movieDetails, {id: movieId}), 'production_companies.0.name', '');
-    const currentCredits = _find(movieCredits, {id: movieId}, {});
-    const director = _find(_get(currentCredits, 'crew', []), {job: 'Director'});
-    const casts = _get(currentCredits, 'cast', []).slice(0, 4);
+    const currentMovieDetails = _get(movieDetails, movieId, {});
+    const productionCompany = _get(currentMovieDetails, 'production_companies.0.name', '');
+    const director = _find(_get(currentMovieDetails, 'credits.crew', []), {job: 'Director'});
+    const casts = _get(currentMovieDetails, 'credits.cast', []).slice(0, 4);
+    const isAddedToWatchList = this.state.addedToWatchList || !_isEmpty(_filter(watchListMovies, {id: movieId}));
 
     return (
       <div className="movie-section__card">
         <div className="movie-section__card-body">
-          {poster &&
-          <img alt="poster" className="movie-section__poster movie-section__poster-img" src={poster}/> }
+          <div className="movie-section__poster"><img alt="poster" className="movie-section__poster-img" src={poster}/></div>
           <div className="movie-section__info">
             <div className="movie-section__card-info__title">{name}</div>
             <div className="movie-section__card-info__description">{description}</div>
@@ -74,7 +94,7 @@ class MovieCard extends Component {
           </div>
         </div>
         <div className="movie-section__card-footer">
-          <div className="movie-section__card-footer__action">Add to Watchlist</div>
+          {isAddedToWatchList ? <div className="movie-section__card-footer__action"><img className="watch-list__tick" src={tickIconUrl}/>Added</div> : <div className="movie-section__card-footer__action" onClick={this.onClickAddToWatchList}>Add to Watchlist</div>}
         </div>
       </div>
     );
@@ -90,20 +110,19 @@ MovieCard.propTypes = {
   baseUrl: PropTypes.string,
   posterSize: PropTypes.string,
   movieDetails: PropTypes.object,
-  movieCredits: PropTypes.object,
   fetchMovieDetails: PropTypes.func,
   fetchMovieCredits: PropTypes.func,
 };
 
-const mapStateToProps = ({ movies: { movieDetails = {}, movieCredits = []}}) => ({
+const mapStateToProps = ({ movies: { movieDetails = {}, watchListMovies}}) => ({
   movieDetails,
-  movieCredits,
+  watchListMovies,
 });
 
 export default connect(
   mapStateToProps, {
     fetchMovieDetails,
-    fetchMovieCredits,
+    onShowLoginPage,
   }
 )(MovieCard);
 

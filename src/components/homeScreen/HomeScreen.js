@@ -10,6 +10,7 @@ import _isEmpty from 'lodash/isEmpty';
 import MovieSection from '../movieSection';
 import SearchResult from '../searchResult';
 import LoginPopUp from '../loginPopUp';
+import WatchList from '../watchlist';
 
 //Actions
 import {
@@ -18,6 +19,9 @@ import {
   searchMovie,
   showHomePage,
   hideHomePage,
+  onShowLoginPage,
+  onHideLoginPage,
+  onShowWatchList,
 } from '../../actions';
 
 //Styles
@@ -27,10 +31,7 @@ import './HomeScreen.css';
 class HomeScreen extends Component {
 
   state = {
-    loggedIn: false,
-    userName: '',
     movieToSearch: '',
-    showLoginPopUp: false,
   }
 
   componentWillMount() {
@@ -43,7 +44,7 @@ class HomeScreen extends Component {
       this.props.fetchMovies('now_playing');
     }
 
-    if(_isEmpty(this.props.baseUrl)) {
+    if (_isEmpty(this.props.baseUrl)) {
       this.props.fetchBaseConfigs();
     }
   }
@@ -61,7 +62,7 @@ class HomeScreen extends Component {
   }
 
   onClickSearch = () => {
-    if(!this.props.searchResult[this.state.movieToSearch]) {
+    if (!this.props.searchResult[this.state.movieToSearch]) {
       this.props.searchMovie(this.state.movieToSearch);
     }
     this.props.hideHomePage();
@@ -73,23 +74,11 @@ class HomeScreen extends Component {
     }
   }
 
-  onClickLogin = () => {
-    this.setState({
-      showLoginPopUp: true,
-    });
-  }
-
-  onCloseLoginPopUp = () => {
-    this.setState({
-      showLoginPopUp: false,
-    })
-  }
-
   renderBody() {
     const { movieToSearch } = this.state;
     const currentSearchResult = this.props.searchResult[movieToSearch];
 
-    if (!_isEmpty(currentSearchResult) && !this.props.showHome) {
+    if (!_isEmpty(currentSearchResult) && this.props.showSearchResult) {
       return (
         <div className="home-screen__body-search">
           <SearchResult
@@ -103,12 +92,24 @@ class HomeScreen extends Component {
       );
     }
 
+    if (this.props.showWatchList) {
+      return (
+        <div className="home-screen__body-watchList">
+          <WatchList
+            baseUrl={this.props.baseUrl}
+            posterSize={this.props.posterSize}
+            goBackHome={this.goBackHome}
+          />
+        </div>
+      )
+    }
+
     const topMovies = this.props.topMovies.movies.slice(0, 20);
     const recentlyReleased = this.props.recentlyReleased.movies.slice(0, 20);
     return (
       <div className="home-screen__body-main">
-        {this.state.showLoginPopUp && <LoginPopUp
-          onCloseLoginPopUp={this.onCloseLoginPopUp}
+        {this.props.showLoginPopUp && <LoginPopUp
+          onCloseLoginPopUp={this.props.onHideLoginPage}
         />}
         <div className="home-screen__body-section">
           <MovieSection
@@ -132,12 +133,29 @@ class HomeScreen extends Component {
     )
   }
 
+  renderUserOptions = () => {
+    const {
+      sessionId,
+      username,
+      } = localStorage;
+
+    if (sessionId) {
+      return <div className="home-screen__header-item">
+        <div className="home-screen__header-item-watchlist" onClick={this.props.onShowWatchList}>My Watchlist</div>
+        <div className="home-screen__header-item-username">{username}</div>
+      </div>;
+    }
+
+    return <span onClick={this.props.onShowLoginPage}>Login</span>;
+
+  }
+
   render() {
     return (
       <div className="home-screen">
         <header className="home-screen__header">
           <div className="home-screen__header-items">
-            <h1 className="home-screen__title"><Link to={'/'}>Movie Gallery</Link></h1>
+            <h1 className="home-screen__title" onClick={this.props.showHomePage}><Link to={'/'}>Movie Gallery</Link></h1>
             <div className="home-screen__header-actions">
               <div className="home-screen__header-actions__search">
                 <input
@@ -150,8 +168,7 @@ class HomeScreen extends Component {
                   <img src={searchLogo} className="search-logo" alt="logo" onClick={this.onClickSearch}/>
                 </div>
               </div>
-              {this.state.loggedIn ? <span>{this.state.userName}</span> :
-                <span onClick={this.onClickLogin}>Login</span>}
+              {this.renderUserOptions()}
             </div>
           </div>
         </header>
@@ -177,13 +194,16 @@ HomeScreen.propTypes = {
   hideHomePage: PropTypes.func,
 };
 
-const mapStateToProps = ({ movies: { topMovies = [], recentlyReleased = [], baseUrl={}, posterSize='', searchResult, showHome }}) => ({
+const mapStateToProps = ({ movies: { topMovies, recentlyReleased, baseUrl={}, posterSize, searchResult, showHome, showSearchResult, showLoginPopUp, showWatchList }}) => ({
   topMovies,
   recentlyReleased,
   baseUrl,
   posterSize,
   searchResult,
   showHome,
+  showSearchResult,
+  showLoginPopUp,
+  showWatchList,
 });
 
 export default connect(
@@ -193,5 +213,8 @@ export default connect(
     searchMovie,
     showHomePage,
     hideHomePage,
+    onHideLoginPage,
+    onShowLoginPage,
+    onShowWatchList,
   }
 )(HomeScreen);

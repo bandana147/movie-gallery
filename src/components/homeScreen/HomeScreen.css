@@ -69,3 +69,15 @@
   border-radius: .2rem;
   margin-left: .5rem;
 }
+
+.home-screen__header-item {
+  width: 15rem;
+  display: flex;
+  justify-content: space-around;
+  cursor: pointer;
+}
+
+.home-screen__body-watchList {
+  width: 45rem;
+  margin: auto;
+}
