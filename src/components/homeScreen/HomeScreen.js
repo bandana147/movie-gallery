@@ -22,10 +22,13 @@ import {
   onShowLoginPage,
   onHideLoginPage,
   onShowWatchList,
+  fetchWatchList,
 } from '../../actions';
 
 //Styles
 import searchLogo from '../../magnifying-glass.svg';
+import loaderIcon from '../../spinner-loader.svg';
+
 import './HomeScreen.css';
 
 class HomeScreen extends Component {
@@ -35,7 +38,6 @@ class HomeScreen extends Component {
   }
 
   componentWillMount() {
-
     if (_isEmpty(this.props.topMovies.movies)) {
       this.props.fetchMovies('top_rated');
     }
@@ -46,6 +48,16 @@ class HomeScreen extends Component {
 
     if (_isEmpty(this.props.baseUrl)) {
       this.props.fetchBaseConfigs();
+    }
+
+    if(localStorage.sessionId) {
+      this.props.fetchWatchList();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.loginSuccessful) {
+      this.props.fetchWatchList();
     }
   }
 
@@ -78,7 +90,13 @@ class HomeScreen extends Component {
     const { movieToSearch } = this.state;
     const currentSearchResult = this.props.searchResult[movieToSearch];
 
-    if (!_isEmpty(currentSearchResult) && this.props.showSearchResult) {
+    if (this.props.loading) {
+      return <div className="home-screen__body-loader">
+        <img src={loaderIcon} className="loader-logo" alt="logo"/>
+      </div>
+    }
+
+    if (this.props.showSearchResult) {
       return (
         <div className="home-screen__body-search">
           <SearchResult
@@ -147,7 +165,6 @@ class HomeScreen extends Component {
     }
 
     return <span onClick={this.props.onShowLoginPage}>Login</span>;
-
   }
 
   render() {
@@ -194,16 +211,18 @@ HomeScreen.propTypes = {
   hideHomePage: PropTypes.func,
 };
 
-const mapStateToProps = ({ movies: { topMovies, recentlyReleased, baseUrl={}, posterSize, searchResult, showHome, showSearchResult, showLoginPopUp, showWatchList }}) => ({
-  topMovies,
-  recentlyReleased,
-  baseUrl,
-  posterSize,
-  searchResult,
-  showHome,
-  showSearchResult,
-  showLoginPopUp,
-  showWatchList,
+const mapStateToProps = ({ movies}) => ({
+  topMovies: movies.topMovies,
+  recentlyReleased: movies.recentlyReleased,
+  baseUrl: movies.baseUrl,
+  posterSize: movies.posterSize,
+  searchResult: movies.searchResult,
+  showHome: movies.showHome,
+  showSearchResult: movies.showSearchResult,
+  showLoginPopUp: movies.showLoginPopUp,
+  showWatchList: movies.showWatchList,
+  loading: movies.loadingMovies || movies.loadingConfigs || movies.loadingDetails,
+  loginSuccessful: movies.loginSuccessful,
 });
 
 export default connect(
@@ -216,5 +235,6 @@ export default connect(
     onHideLoginPage,
     onShowLoginPage,
     onShowWatchList,
+    fetchWatchList,
   }
 )(HomeScreen);

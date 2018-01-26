@@ -81,3 +81,10 @@
   width: 45rem;
   margin: auto;
 }
+
+.home-screen__body-loader {
+  height: calc(100vh - 14rem);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

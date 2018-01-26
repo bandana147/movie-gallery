@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {
-  Link
-} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 
@@ -18,6 +16,7 @@ import {
 
 //Styles
 import './MovieList.css';
+import loaderIcon from '../../spinner-loader.svg';
 
 const MOVIE_TYPE_LABEL = {
   top_rated: 'Top Rated Movies',
@@ -92,7 +91,7 @@ class MovieList extends Component {
   render() {
     const {
       movies = [],
-      loadingMovies,
+      loadingMoreMovies,
       } = _get(this.props, `${MOVIE_TYPE_KEY[this.state.movieType]}`, {});
     const movieNodes = movies.map(this.renderMovies);
 
@@ -111,7 +110,7 @@ class MovieList extends Component {
           <div className="movie-list__list" onScroll={this.onScrollBody}>
             {movieNodes}
           </div>
-          {loadingMovies && <div className="movie-list__view-more">Loading More</div>}
+          {loadingMoreMovies && <div className="movie-list__view-more"><img className="movie_list-loader-spinner" src={loaderIcon} alt="loader"/></div>}
         </div>
       </div>
     );
@@ -129,12 +128,12 @@ MovieList.propTypes = {
   fetchBaseConfigs: PropTypes.func,
 };
 
-const mapStateToProps = ({  movies: {topMovies = [], recentlyReleased = [], baseUrl={}, posterSize='', loadingMovies, hasMore, }}) => ({
+const mapStateToProps = ({  movies: {topMovies = [], recentlyReleased = [], baseUrl={}, posterSize='', loadingMoreMovies, hasMore, }}) => ({
   topMovies,
   recentlyReleased,
   baseUrl,
   posterSize,
-  loadingMovies,
+  loadingMoreMovies,
   hasMore,
 });
 

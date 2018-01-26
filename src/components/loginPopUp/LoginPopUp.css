@@ -1,11 +1,13 @@
 .login-main {
     position: absolute;
     width: 20rem;
-    height: 18rem;
+    height: 15rem;
     background: black;
     color: white;
     padding: 2rem;
     border-radius: 5px;
+    left: 35%;
+    top: 30%;
 }
 
 .login-body {
@@ -25,6 +27,12 @@
 
 .login-body__item {
     margin-bottom: 1rem;
+    height: 2rem;
+    width: 12rem;
+    background: #1ea0ea;
+    text-align: center;
+    line-height: 2rem;
+    cursor: pointer;
 }
 
 .login-body__item-input {
@@ -39,4 +47,14 @@
 
 .login-close {
     cursor: pointer;
+}
+
+.login-backdrop {
+    position: absolute;
+    top: 0;
+    background-color: #2e2e2e;
+    opacity: 0.6;
+    width: 100%;
+    height: 100%;
+    left: 0;
 }

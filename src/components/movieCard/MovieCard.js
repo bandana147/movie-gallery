@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
-import axios from 'axios';
 
 import _get from 'lodash/get';
 import _find from 'lodash/find';
@@ -28,7 +27,7 @@ class MovieCard extends Component {
 
   state = {
     addedToWatchList: false,
-  }
+  };
 
   componentWillMount() {
     const {
@@ -94,7 +93,7 @@ class MovieCard extends Component {
           </div>
         </div>
         <div className="movie-section__card-footer">
-          {isAddedToWatchList ? <div className="movie-section__card-footer__action"><img className="watch-list__tick" src={tickIconUrl}/>Added</div> : <div className="movie-section__card-footer__action" onClick={this.onClickAddToWatchList}>Add to Watchlist</div>}
+          {isAddedToWatchList ? <div className="movie-section__card-footer__action"><img className="watch-list__tick" alt="tick" src={tickIconUrl}/>Added</div> : <div className="movie-section__card-footer__action" onClick={this.onClickAddToWatchList}>Add to Watchlist</div>}
         </div>
       </div>
     );

@@ -12,8 +12,6 @@ import {
   SEARCH_MOVIE_SUCCESS,
   SHOW_HOMEPAGE,
   HIDE_HOMEPAGE,
-  ADD_TO_WATCH_LIST_SUCCESS,
-  ADD_TO_WATCH_LIST_PENDING,
   USER_LOGIN_PENDING,
   USER_LOGIN_SUCCESS,
   HIDE_LOGIN_POP_UP,
@@ -50,6 +48,9 @@ export default function (state = INITIAL_STATE, action) {
           loadingMovies: {
             $set: true,
           },
+          loadingMoreMovies: {
+            $set: true,
+          }
         },
       });
 
@@ -65,6 +66,9 @@ export default function (state = INITIAL_STATE, action) {
           loadingMovies: {
             $set: false,
           },
+          loadingMoreMovies: {
+            $set: false,
+          },
           hasMore: {
             $set: payload.hasMore,
           }
@@ -73,7 +77,7 @@ export default function (state = INITIAL_STATE, action) {
 
     case FETCH_BASE_CONFIGS_PENDING:
       return update(state, {
-        loading: {
+        loadingConfigs: {
           $set: true,
         },
       });
@@ -83,14 +87,14 @@ export default function (state = INITIAL_STATE, action) {
         baseUrl: {
           $set: _get(payload, 'images.base_url'),
         },
-        loading: {
+        loadingConfigs: {
           $set: false,
         },
       });
 
     case FETCH_MOVIE_DETAILS_PENDING:
       return update(state, {
-        loading: {
+        loadingDetails: {
           $set: true,
         },
       });
@@ -102,14 +106,14 @@ export default function (state = INITIAL_STATE, action) {
             $set: payload.data,
           }
         },
-        loading: {
+        loadingDetails: {
           $set: false,
         },
       });
 
     case SEARCH_MOVIE_PENDING:
       return update(state, {
-        loading: {
+        seachingMovies: {
           $set: true,
         },
       });
@@ -127,7 +131,7 @@ export default function (state = INITIAL_STATE, action) {
         showSearchResult: {
           $set: true,
         },
-        loading: {
+        seachingMovies: {
           $set: false,
         },
       });
@@ -154,14 +158,14 @@ export default function (state = INITIAL_STATE, action) {
 
     case USER_LOGIN_PENDING:
       return update(state, {
-        loginSucessful: {
+        loginSuccessful: {
           $set: false,
         },
       });
 
     case USER_LOGIN_SUCCESS:
       return update(state, {
-        loginSucessful: {
+        loginSuccessful: {
           $set: true,
         },
         showLoginPopUp: {
