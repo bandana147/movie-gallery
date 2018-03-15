@@ -1,8 +1,8 @@
 ## Intro
 
-->Image gallery is a place where you can see Top rated, recently released movies. You can also see the overview, casts, director and release date of the movie. 
+->Movie gallery is a place where you can see Top rated, recently released movies. You can also see the overview, casts, director and release date of the movie. 
 
-->Image gallery also has a search feature where you can search for a Particular movie
+->Movie gallery also has a search feature where you can search for a Particular movie
 
 -> You can also add a movie to your watchlist and check it later.
 
