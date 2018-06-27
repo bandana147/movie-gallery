@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import {
   Link
 } from 'react-router-dom';
@@ -27,7 +27,6 @@ import {
 
 //Styles
 import searchLogo from '../../magnifying-glass.svg';
-import loaderIcon from '../../spinner-loader.svg';
 
 import './HomeScreen.css';
 
@@ -38,6 +37,7 @@ class HomeScreen extends Component {
   }
 
   componentWillMount() {
+    debugger
     if (_isEmpty(this.props.topMovies.movies)) {
       this.props.fetchMovies('top_rated');
     }
@@ -49,16 +49,12 @@ class HomeScreen extends Component {
     if (_isEmpty(this.props.baseUrl)) {
       this.props.fetchBaseConfigs();
     }
-
-    if(localStorage.sessionId) {
-      this.props.fetchWatchList();
-    }
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.loginSuccessful) {
-      this.props.fetchWatchList();
-    }
+    // if(nextProps.loginSuccessful) {
+    //   this.props.fetchWatchList();
+    // }
   }
 
   goBackHome = () => {
@@ -90,12 +86,6 @@ class HomeScreen extends Component {
     const { movieToSearch } = this.state;
     const currentSearchResult = this.props.searchResult[movieToSearch];
 
-    if (this.props.loading) {
-      return <div className="home-screen__body-loader">
-        <img src={loaderIcon} className="loader-logo" alt="logo"/>
-      </div>
-    }
-
     if (this.props.showSearchResult) {
       return (
         <div className="home-screen__body-search">
@@ -124,6 +114,7 @@ class HomeScreen extends Component {
 
     const topMovies = this.props.topMovies.movies.slice(0, 20);
     const recentlyReleased = this.props.recentlyReleased.movies.slice(0, 20);
+
     return (
       <div className="home-screen__body-main">
         {this.props.showLoginPopUp && <LoginPopUp
@@ -131,6 +122,7 @@ class HomeScreen extends Component {
         />}
         <div className="home-screen__body-section">
           <MovieSection
+            loading={this.props.loading}
             type="top_rated"
             baseUrl={this.props.baseUrl}
             posterSize={this.props.posterSize}
@@ -140,6 +132,7 @@ class HomeScreen extends Component {
         </div>
         <div className="home-screen__body-section">
           <MovieSection
+            loading={this.props.loading}
             type="now_playing"
             baseUrl={this.props.baseUrl}
             posterSize={this.props.posterSize}
@@ -155,7 +148,7 @@ class HomeScreen extends Component {
     const {
       sessionId,
       username,
-      } = localStorage;
+    } = localStorage;
 
     if (sessionId) {
       return <div className="home-screen__header-item">
@@ -182,7 +175,7 @@ class HomeScreen extends Component {
                   placeholder="Search Movie"
                 />
                 <div className="search-logo__cont">
-                  <img src={searchLogo} className="search-logo" alt="logo" onClick={this.onClickSearch}/>
+                  <img src={searchLogo} className="search-logo" alt="logo" onClick={this.onClickSearch} />
                 </div>
               </div>
               {this.renderUserOptions()}
@@ -211,7 +204,7 @@ HomeScreen.propTypes = {
   hideHomePage: PropTypes.func,
 };
 
-const mapStateToProps = ({ movies}) => ({
+const mapStateToProps = ({ movies }) => ({
   topMovies: movies.topMovies,
   recentlyReleased: movies.recentlyReleased,
   baseUrl: movies.baseUrl,
@@ -221,7 +214,7 @@ const mapStateToProps = ({ movies}) => ({
   showSearchResult: movies.showSearchResult,
   showLoginPopUp: movies.showLoginPopUp,
   showWatchList: movies.showWatchList,
-  loading: movies.loadingMovies || movies.loadingConfigs || movies.loadingDetails,
+  loading: movies.loadingMovies,
   loginSuccessful: movies.loginSuccessful,
 });
 

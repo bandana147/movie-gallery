@@ -53,6 +53,7 @@ export const fetchBaseConfigs = (type) => dispatch => {
 export const fetchMovieDetails = (movieId) => dispatch => {
   dispatch({
     type: FETCH_MOVIE_DETAILS_PENDING,
+    movieId
   });
 
   movieApi.fetchMovieDetails(movieId)

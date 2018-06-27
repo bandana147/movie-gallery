@@ -33,9 +33,10 @@ class MovieCard extends Component {
     const {
       movieId,
       movieDetails,
+      loadingDetails = {},
       } = this.props;
 
-    if (movieId && _isEmpty(movieDetails[movieId])) {
+    if (movieId && _isEmpty(movieDetails[movieId]) && !loadingDetails[movieId]) {
       this.props.fetchMovieDetails(movieId);
     }
   }
@@ -73,7 +74,8 @@ class MovieCard extends Component {
     const director = _find(_get(currentMovieDetails, 'credits.crew', []), {job: 'Director'});
     const casts = _get(currentMovieDetails, 'credits.cast', []).slice(0, 4);
     const isAddedToWatchList = this.state.addedToWatchList || !_isEmpty(_filter(watchListMovies, {id: movieId}));
-
+    
+   
     return (
       <div className="movie-section__card">
         <div className="movie-section__card-body">
@@ -113,9 +115,10 @@ MovieCard.propTypes = {
   fetchMovieCredits: PropTypes.func,
 };
 
-const mapStateToProps = ({ movies: { movieDetails = {}, watchListMovies}}) => ({
+const mapStateToProps = ({ movies: { movieDetails = {}, watchListMovies, loadingDetails}}) => ({
   movieDetails,
   watchListMovies,
+  loadingDetails
 });
 
 export default connect(

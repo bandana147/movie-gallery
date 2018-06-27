@@ -36,10 +36,11 @@ const INITIAL_STATE = {
   posterSize: 'w154',
   movieDetails: {},
   searchResult: [],
+  loadingDetails: {},
 };
 
 export default function (state = INITIAL_STATE, action) {
-  const {payload} = action;
+  const { payload, movieId } = action;
 
   switch (action.type) {
     case FETCH_MOVIES_PENDING:
@@ -93,13 +94,17 @@ export default function (state = INITIAL_STATE, action) {
       });
 
     case FETCH_MOVIE_DETAILS_PENDING:
+      
       return update(state, {
         loadingDetails: {
-          $set: true,
-        },
+          [movieId]: {
+            $set: true
+          }
+        }
       });
 
     case FETCH_MOVIE_DETAILS_SUCCESS:
+
       return update(state, {
         movieDetails: {
           [payload.movieId]: {
@@ -107,8 +112,10 @@ export default function (state = INITIAL_STATE, action) {
           }
         },
         loadingDetails: {
-          $set: false,
-        },
+          [movieId]: {
+            $set: false
+          }
+        }
       });
 
     case SEARCH_MOVIE_PENDING:

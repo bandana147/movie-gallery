@@ -11,6 +11,8 @@ import MovieCard from '../movieCard';
 //styles
 import './MovieSection.css';
 
+import loaderIcon from '../../spinner-loader.svg';
+
 class MovieSection extends Component {
 
   renderMovies = movie => {
@@ -32,8 +34,19 @@ class MovieSection extends Component {
    );
   };
 
-  render() {
+  renderMovieBody = () => {
     const movieNodes = _get(this.props, 'movies', []).map(this.renderMovies);
+
+    if (this.props.loading) {
+      return <div className="home-screen__body-loader">
+        <img src={loaderIcon} className="loader-logo" alt="logo"/>
+      </div>
+    }
+
+    return movieNodes;
+  }
+
+  render() {
     const toLink = `/${this.props.type}`;
 
     return (
@@ -42,7 +55,7 @@ class MovieSection extends Component {
           <h3 className="movie-section__title">{this.props.sectionName}</h3>
         </div>
         <div className="movie-section__body">
-          {movieNodes}
+          {this.renderMovieBody()}
         </div>
         <div className="view-more" onClick={this.props.onClickViewMore}><Link to={toLink}>View More</Link></div>
       </div>

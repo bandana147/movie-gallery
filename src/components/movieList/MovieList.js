@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
@@ -36,7 +36,7 @@ class MovieList extends Component {
 
   componentWillMount() {
     const movieType = (_get(this.props, 'location.pathname', '')).replace(/\//g, '');
-    if(_isEmpty(this.props.baseUrl)) {
+    if (_isEmpty(this.props.baseUrl)) {
       this.props.fetchBaseConfigs();
     }
 
@@ -49,6 +49,8 @@ class MovieList extends Component {
     });
   }
 
+
+
   onClickViewMore = () => {
 
   }
@@ -56,14 +58,13 @@ class MovieList extends Component {
   onScrollBody = (event) => {
     const {
       movieType
-      } = this.state;
+    } = this.state;
     const { hasMore, loadingMovies } = this.props[MOVIE_TYPE_KEY[this.state.movieType]];
 
     const contentBody = event.target;
 
     if (contentBody.scrollTop === (contentBody.scrollHeight - contentBody.offsetHeight)) {
       if (!loadingMovies && hasMore) {
-        console.log(true);
         this.props.fetchMovies(movieType, true);
       }
     }
@@ -73,7 +74,8 @@ class MovieList extends Component {
     const {
       baseUrl,
       posterSize,
-      } = this.props;
+    } = this.props;
+
 
     return (
       <MovieCard
@@ -89,10 +91,12 @@ class MovieList extends Component {
   };
 
   render() {
+
     const {
       movies = [],
       loadingMoreMovies,
-      } = _get(this.props, `${MOVIE_TYPE_KEY[this.state.movieType]}`, {});
+    } = _get(this.props, `${MOVIE_TYPE_KEY[this.state.movieType]}`, {});
+    
     const movieNodes = movies.map(this.renderMovies);
 
     return (
@@ -110,7 +114,7 @@ class MovieList extends Component {
           <div className="movie-list__list" onScroll={this.onScrollBody}>
             {movieNodes}
           </div>
-          {loadingMoreMovies && <div className="movie-list__view-more"><img className="movie_list-loader-spinner" src={loaderIcon} alt="loader"/></div>}
+          {loadingMoreMovies && <div className="movie-list__view-more"><img className="movie_list-loader-spinner" src={loaderIcon} alt="loader" /></div>}
         </div>
       </div>
     );
@@ -128,13 +132,14 @@ MovieList.propTypes = {
   fetchBaseConfigs: PropTypes.func,
 };
 
-const mapStateToProps = ({  movies: {topMovies = [], recentlyReleased = [], baseUrl={}, posterSize='', loadingMoreMovies, hasMore, }}) => ({
+const mapStateToProps = ({ movies: { topMovies = [], movieDetails, recentlyReleased = [], baseUrl = {}, posterSize = '', loadingMoreMovies, hasMore } }) => ({
   topMovies,
   recentlyReleased,
   baseUrl,
   posterSize,
   loadingMoreMovies,
   hasMore,
+  movieDetails
 });
 
 export default connect(
